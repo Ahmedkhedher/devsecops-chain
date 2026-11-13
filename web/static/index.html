@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="scan-token" content="__TOKEN__">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="DevSecOps Chain — risk-ranked vulnerability analysis. Scan, re-rank, explain, prove, and fix security issues locally.">
+  <title>DevSecOps Chain — risk-ranked vulnerability analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- subtle ambient background blurs -->
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </span>
+      <span class="brand-text"><strong>DevSecOps Chain</strong><small>local security console</small></span>
+    </div>
+    <div class="top-actions">
+      <span class="local-pill"><span class="pulse" aria-hidden="true"></span>127.0.0.1 · no telemetry</span>
+      <button type="button" class="ghost" id="doctor-top-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Environment
+      </button>
+      <button type="button" class="ghost ghost-danger" id="shutdown-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+        Stop server
+      </button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="commandbar">
+      <section class="hero">
+        <div class="hero-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SCA · exploitability · exposure · policy
+        </div>
+        <h1>Know what to fix <span class="grad">first.</span></h1>
+        <p class="lede">Scan a codebase, separate exploitable risk from
+          dead-dependency noise, and see how an attacker reaches it — then prove
+          the decision with VEX, a policy gate, and a delta from the last run.</p>
+      </section>
+
+      <section class="chain" id="walkthrough" aria-label="How the pipeline works">
+        <div class="chain-step">
+          <b>1</b>
+          <span>Detect<small>Trivy SCA</small></span>
+        </div>
+        <div class="chain-arrow" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="chain-step">
+          <b>2</b>
+          <span>Re-rank<small>EPSS · KEV · reach</small></span>
+        </div>
+        <div class="chain-arrow" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="chain-step">
+          <b>3</b>
+          <span>Explain<small>LLM + audit</small></span>
+        </div>
+        <div class="chain-arrow" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="chain-step">
+          <b>4</b>
+          <span>Prove<small>VEX · policy · delta</small></span>
+        </div>
+        <div class="chain-arrow" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="chain-step">
+          <b>5</b>
+          <span>Fix<small>plan · patch</small></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="rail">
+      <section class="panel scanner" aria-labelledby="scan-title">
+        <div class="panel-head">
+          <div class="panel-head-left">
+            <span class="panel-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <h2 id="scan-title">New scan</h2>
+          </div>
+          <span class="muted">same pipeline as CLI &amp; CI</span>
+        </div>
+
+        <form id="scan-form" novalidate>
+          <div class="modes" role="radiogroup" aria-label="Scan source">
+            <label class="mode">
+              <input type="radio" name="mode" value="demo" checked>
+              <span class="mode-radio" aria-hidden="true"></span>
+              <span class="mode-body">
+                <strong>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Demo fixture
+                </strong>
+                <small>Offline · instant · 5 seeded CVEs</small>
+              </span>
+            </label>
+            <label class="mode">
+              <input type="radio" name="mode" value="live">
+              <span class="mode-radio" aria-hidden="true"></span>
+              <span class="mode-body">
+                <strong>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  Live folder
+                </strong>
+                <small>Runs Trivy on any project</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="field" id="path-field">
+            <label for="path">Project folder</label>
+            <div class="path-row">
+              <input id="path" type="text" placeholder="C:\path\to\project"
+                     autocomplete="off" spellcheck="false" disabled>
+              <button type="button" class="ghost" id="browse-btn" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                Browse…
+              </button>
+            </div>
+            <p class="field-note" id="path-note">The demo scans the bundled testproject
+              against the shipped Trivy report.</p>
+          </div>
+
+          <div class="options">
+            <label class="check"><input type="checkbox" id="reachability" checked>
+              Reachability &amp; exploit paths</label>
+            <label class="check"><input type="checkbox" id="offline">
+              Offline enrichment <span class="muted">(no EPSS/KEV/NVD)</span></label>
+            <label class="check"><input type="checkbox" id="policy" checked>
+              Evaluate sample policy</label>
+            <label class="select-label" for="llm">Explanations
+              <select id="llm">
+                <option value="stub">Stub (offline)</option>
+                <option value="ollama">Ollama (local)</option>
+                <option value="openai">OpenAI-compatible</option>
+              </select>
+            </label>
+            <label class="select-label hidden" for="ollama-model" id="model-label">Model
+              <select id="ollama-model"></select>
+            </label>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="primary" id="scan-btn">
+              <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span id="scan-btn-label">Run demo scan</span>
+            </button>
+            <p class="hint" id="form-hint">Demo data is bundled — no Trivy or network required.</p>
+          </div>
+        </form>
+
+        <button type="button" class="link-btn" id="doctor-btn">Check environment</button>
+        <div class="banner error hidden" id="form-error" role="alert"></div>
+      </section>
+
+      <section class="panel readiness hidden" id="readiness" aria-label="Environment readiness"></section>
+    </div>
+
+    <div class="surface">
+      <section class="panel progress hidden" id="progress" aria-live="polite">
+        <div class="progress-head">
+          <div><p class="eyebrow">Pipeline running</p><h2 id="stage">Starting</h2></div>
+          <span class="timer" id="timer">0.0s</span>
+        </div>
+        <div class="bar" aria-hidden="true"><span></span></div>
+        <ol class="stage-log" id="stage-log"></ol>
+        <p class="muted small" id="progress-hint">Live scans may take a few minutes on
+          the first run while Trivy downloads its vulnerability database.</p>
+      </section>
+
+      <section class="summary hidden" id="summary" aria-label="Scan summary">
+        <article class="stat clickable" data-filter="" title="Click to show all findings">
+          <div class="stat-top">
+            <span class="stat-label">Findings</span>
+            <span class="stat-icon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
+          </div>
+          <strong id="stat-total">0</strong>
+          <small>ranked by priority</small>
+        </article>
+        <article class="stat clickable" data-filter="severe" title="Click to filter critical & high">
+          <div class="stat-top">
+            <span class="stat-label">Critical + high</span>
+            <span class="stat-icon stat-icon-critical" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+          </div>
+          <strong id="stat-severe">0</strong>
+          <small>severity signal</small>
+        </article>
+        <article class="stat clickable" data-filter="kev" title="Click to filter KEV listed">
+          <div class="stat-top">
+            <span class="stat-label">Known exploited</span>
+            <span class="stat-icon stat-icon-kev" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+            </span>
+          </div>
+          <strong id="stat-kev">0</strong>
+          <small>CISA KEV</small>
+        </article>
+        <article class="stat clickable" data-filter="exposed" title="Click to filter network / CLI / local">
+          <div class="stat-top">
+            <span class="stat-label">Exposed</span>
+            <span class="stat-icon stat-icon-exposed" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </span>
+          </div>
+          <strong id="stat-exposed">0</strong>
+          <small>network / CLI / local</small>
+        </article>
+        <article class="stat clickable" data-filter="unused" title="Click to filter unused deps">
+          <div class="stat-top">
+            <span class="stat-label">Unused deps</span>
+            <span class="stat-icon stat-icon-unused" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </span>
+          </div>
+          <strong id="stat-unused">0</strong>
+          <small>demoted by reachability</small>
+        </article>
+      </section>
+
+      <section class="panel gate hidden" id="gate" aria-label="Policy gate"></section>
+
+      <section class="panel delta hidden" id="delta" aria-label="Scan delta"></section>
+
+      <section class="panel remediation hidden" id="remediation" aria-label="Remediation plan"></section>
+
+      <section class="panel results hidden" id="results">
+        <div class="results-head">
+          <div><p class="eyebrow">Ranked findings</p><h2 id="results-title">Results</h2></div>
+          <div class="results-actions">
+            <div class="view-switcher" role="radiogroup" aria-label="Display mode">
+              <button type="button" class="view-btn active" id="view-cards-btn" data-view="cards" title="Claude AI Assessment Cards View">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                AI Cards
+              </button>
+              <button type="button" class="view-btn" id="view-table-btn" data-view="table" title="Compact Table View">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                Table
+              </button>
+            </div>
+            <button type="button" class="ghost" data-export="json">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              JSON</button>
+            <button type="button" class="ghost" data-export="markdown">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              PR markdown</button>
+            <button type="button" class="ghost" data-export="remediation" id="plan-export">Plan</button>
+            <button type="button" class="ghost" data-export="patch" id="patch-export">Patch</button>
+            <button type="button" class="ghost" data-export="vex">OpenVEX</button>
+            <button type="button" class="ghost" data-export="policy" id="policy-export">Gate JSON</button>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="filter-input-wrap">
+            <svg class="filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="filter" type="search" placeholder="Filter by CVE, package, or target…  ( / )"
+                   autocomplete="off">
+          </div>
+          <select id="severity-filter" aria-label="Filter by severity">
+            <option value="">All severities</option>
+            <option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option>
+            <option>LOW</option><option>UNKNOWN</option>
+          </select>
+          <span class="muted small" id="filter-count"></span>
+        </div>
+
+        <!-- AI Cards View Container -->
+        <div class="cards-wrap" id="findings-cards"></div>
+
+        <!-- Compact Table View Container -->
+        <div class="table-wrap hidden">
+          <table>
+            <thead><tr>
+              <th class="sortable" data-sort="rank"># <span class="sort-arrow">↕</span></th>
+              <th class="sortable" data-sort="severity">Severity <span class="sort-arrow">↕</span></th>
+              <th class="sortable" data-sort="cve">CVE <span class="sort-arrow">↕</span></th>
+              <th class="sortable" data-sort="package">Package <span class="sort-arrow">↕</span></th>
+              <th class="sortable" data-sort="priority">Priority <span class="sort-arrow">↕</span></th>
+              <th>AI Verdict &amp; Signals</th>
+              <th class="sortable" data-sort="fix">Fix <span class="sort-arrow">↕</span></th>
+            </tr></thead>
+            <tbody id="findings-body"></tbody>
+          </table>
+        </div>
+        <div class="empty hidden" id="empty">
+          <span class="empty-mark" aria-hidden="true"></span>
+          <strong>No vulnerabilities found.</strong><span>Nothing matched this scan or filter.</span>
+        </div>
+      </section>
+
+      <p class="footnote">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Runs locally on 127.0.0.1. Live mode queries EPSS, CISA KEV,
+        and NVD; nothing from your code is uploaded.</p>
+    </div>
+  </main>
+
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="drawer-cve">
+    <div class="drawer-head">
+      <div>
+        <p class="eyebrow" id="drawer-severity">Finding</p>
+        <div class="drawer-title-row">
+          <h2 id="drawer-cve">CVE</h2>
+          <button type="button" class="ghost tiny copy-cve-btn" id="drawer-copy-btn" title="Copy CVE ID">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <div class="drawer-head-actions">
+        <button type="button" class="icon-btn" id="drawer-prev" aria-label="Previous finding" title="Previous finding (↑)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="drawer-next" aria-label="Next finding" title="Next finding (↓)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="drawer-close" aria-label="Close details" title="Close (Esc)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="drawer-tabs" role="tablist">
+      <button type="button" class="drawer-tab active" data-tab="ai" role="tab" aria-selected="true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+        AI Analysis
+      </button>
+      <button type="button" class="drawer-tab" data-tab="path" role="tab" aria-selected="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Attack Path
+      </button>
+      <button type="button" class="drawer-tab" data-tab="grounding" role="tab" aria-selected="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        Audit Proof
+      </button>
+      <button type="button" class="drawer-tab" data-tab="advisory" role="tab" aria-selected="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Advisory
+      </button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+  <div class="scrim hidden" id="scrim"></div>
+
+  <!-- Toast notification container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <dialog id="folder-dialog">
+    <div class="dialog-head">
+      <div><p class="eyebrow">Folder picker</p><h2>Choose a project folder</h2></div>
+      <button type="button" class="icon-btn" id="folder-close" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="folder-tools">
+      <button type="button" class="ghost" id="folder-up">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        Up
+      </button>
+      <div class="roots" id="folder-roots"></div>
+    </div>
+    <p class="folder-current" id="folder-current">—</p>
+    <div class="folder-list" id="folder-list"></div>
+    <div class="dialog-actions">
+      <button type="button" class="primary" id="folder-select">Select this folder</button>
+    </div>
+    <p class="banner error hidden" id="folder-error" role="alert"></p>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

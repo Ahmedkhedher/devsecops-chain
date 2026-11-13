@@ -1,0 +1,264 @@
+name: security-scan
+
+# Dogfoods the DevSecOps chain on this repository:
+#   1. the unit-test suite must pass first
+#   2. the repo self-scan is gated by .security/policy.json (enforced)
+#   3. a deterministic demo runs the full pipeline against the intentionally
+#      vulnerable testproject fixture and publishes VEX / policy / delta evidence
+#
+# The gate is enforced in a final step, after artifacts and the PR comment have
+# been published, so a failing policy still leaves reviewers with evidence.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write   # needed to post/update the PR comment
+  issues: write          # PR comments are the issues-comments API
+
+concurrency:
+  group: security-scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The default mirror.gcr.io endpoint is frequently slow or blocked; pin the
+  # GHCR mirror (also the pipeline's built-in default) and allow a long pull.
+  TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+  TRIVY_TIMEOUT: 30m
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run test suite
+        run: python -m unittest discover -s tests -v
+
+  scan:
+    name: Self-scan + policy gate
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sh -s -- -b /usr/local/bin
+          trivy --version
+
+      - name: Restore Trivy vulnerability DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            trivy-db-${{ runner.os }}-
+
+      - name: Restore scan history
+        uses: actions/cache@v4
+        with:
+          path: data/history.db
+          key: scan-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            scan-history-${{ github.ref_name }}-
+
+      - name: Scan dependencies
+        run: |
+          mkdir -p data
+          # testproject/ ships pinned vulnerable packages on purpose, and the
+          # fixture reports under tests/ should never drive this repo's gate.
+          trivy fs --format json --scanners vuln --quiet \
+            --skip-dirs testproject --skip-dirs tests --skip-dirs .git \
+            . > data/trivy_report.json
+
+      - name: Run pipeline
+        env:
+          # Optional: point at a hosted LLM for richer explanations.
+          # Without these, the job uses the offline stub explainer.
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+        run: |
+          set -e
+          LLM=stub
+          if [ -n "$OPENAI_API_KEY" ]; then LLM=openai; fi
+
+          python3 -m pipeline \
+            --from-json data/trivy_report.json \
+            --code-root . \
+            --llm "$LLM" \
+            --top 15 \
+            --json-out data/findings.json \
+            --markdown-out data/pr_comment.md \
+            --vex-out data/vex.json \
+            --policy .security/policy.json \
+            --policy-out data/policy_gate.json \
+            --policy-markdown-out data/policy_gate.md \
+            --no-policy-fail \
+            --history data/history.db \
+            --delta-markdown-out data/delta.md \
+            --remediation-out data/remediation_plan.md \
+            --patch-out data/remediation.patch \
+            --html-out data/security_lab.html
+
+      - name: Append delta and gate to PR comment
+        if: always() && hashFiles('data/pr_comment.md') != ''
+        run: |
+          {
+            if [ -s data/delta.md ]; then cat data/delta.md; echo; fi
+            if [ -s data/policy_gate.md ]; then cat data/policy_gate.md; echo; fi
+            if [ -s data/remediation_plan.md ]; then cat data/remediation_plan.md; echo; fi
+          } >> data/pr_comment.md
+
+      - name: Upload scan artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-findings
+          path: |
+            data/trivy_report.json
+            data/findings.json
+            data/pr_comment.md
+            data/vex.json
+            data/policy_gate.json
+            data/policy_gate.md
+            data/delta.md
+            data/remediation_plan.md
+            data/remediation.patch
+            data/security_lab.html
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Post PR comment
+        if: >
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          hashFiles('data/pr_comment.md') != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 -m ci.post_pr_comment \
+            --markdown data/pr_comment.md \
+            --repo "${{ github.repository }}" \
+            --pr "${{ github.event.pull_request.number }}" \
+            --token "$GITHUB_TOKEN"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Security scan complete" >> "$GITHUB_STEP_SUMMARY"
+          if [ -s data/policy_gate.md ]; then cat data/policy_gate.md >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ -s data/delta.md ]; then cat data/delta.md >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Enforce policy gate
+        if: always() && hashFiles('data/policy_gate.json') != ''
+        run: |
+          python3 - <<'PY'
+          import json
+          import sys
+
+          with open("data/policy_gate.json", encoding="utf-8") as fh:
+              report = json.load(fh)
+
+          print(f"policy: {report.get('policy')} -> "
+                f"{'PASS' if report.get('passed') else 'FAIL'}")
+          if report.get("passed"):
+              sys.exit(0)
+
+          for v in report.get("violations", []):
+              print(f"  VIOLATION [{v.get('rule')}] {v.get('cve')} "
+                    f"({v.get('package')}): {v.get('reason')}")
+          sys.exit(1)
+          PY
+
+  demo:
+    name: Demo (vulnerable fixture)
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore demo history
+        uses: actions/cache@v4
+        with:
+          path: data/demo_history.db
+          key: demo-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            demo-history-${{ github.ref_name }}-
+
+      - name: Run end-to-end demo (offline fixture)
+        run: |
+          set -e
+          mkdir -p data
+          python3 -m pipeline \
+            --from-json tests/fixtures/trivy_report.json \
+            --offline \
+            --code-root testproject \
+            --top 15 \
+            --json-out data/demo_findings.json \
+            --markdown-out data/demo_comment.md \
+            --vex-out data/demo_vex.json \
+            --policy .security/policy.json \
+            --policy-out data/demo_gate.json \
+            --policy-markdown-out data/demo_gate.md \
+            --no-policy-fail \
+            --history data/demo_history.db \
+            --delta-markdown-out data/demo_delta.md \
+            --remediation-out data/demo_remediation.md \
+            --patch-out data/demo_remediation.patch \
+            --html-out data/demo_lab.html
+
+      - name: Upload demo artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-demo
+          path: |
+            data/demo_findings.json
+            data/demo_comment.md
+            data/demo_vex.json
+            data/demo_gate.json
+            data/demo_gate.md
+            data/demo_delta.md
+            data/demo_remediation.md
+            data/demo_remediation.patch
+            data/demo_lab.html
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Demo: intentionally vulnerable fixture"
+            echo
+            echo "The sample policy gate is **expected to fail** here."
+            echo "This job publishes evidence and does not block the build."
+            echo
+            if [ -s data/demo_gate.md ]; then cat data/demo_gate.md; echo; fi
+            if [ -s data/demo_delta.md ]; then cat data/demo_delta.md; echo; fi
+            if [ -s data/demo_remediation.md ]; then cat data/demo_remediation.md; echo; fi
+          } >> "$GITHUB_STEP_SUMMARY"

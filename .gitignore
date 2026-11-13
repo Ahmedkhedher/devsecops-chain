@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Pipeline caches and generated output (regenerated on each run)
+data/epss_cache.json
+data/kev_cache.json
+data/nvd_cache.json
+data/trivy_report.json
+data/findings.json
+data/pr_comment.md
+data/eval_report.json
+data/history.db
+data/web_history.db
+data/demo_history.db
+data/vex.json
+data/policy_gate.json
+data/policy_gate.md
+data/delta.md
+data/security_lab.html
+data/demo_*
+data/ci-check/
+
+# Keep the data dir itself
+!data/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,8 @@
+# Deliberately vulnerable seed project for testing the detection pipeline.
+# These pinned-old versions carry well-known CVEs so Trivy has real findings.
+requests==2.6.0
+flask==0.12.2
+urllib3==1.24.1
+jinja2==2.10
+pyyaml==5.1
+django==1.11.29

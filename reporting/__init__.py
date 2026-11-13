@@ -1,0 +1,1 @@
+"""Offline, dependency-free decision reports for pipeline findings."""

@@ -1,0 +1,23 @@
+# devsecops-chain runtime dependencies.
+#
+# The entire pipeline (Phases 1-6) runs on the Python standard library alone --
+# HTTP via urllib, AST via ast, JSON via json. Nothing here is required.
+#
+# These optional packages are only needed for specific extras:
+
+# Validate the GitHub Actions workflow YAML locally (dev convenience).
+# NOTE: on Python 3.15 there is no prebuilt wheel and it compiles a C extension,
+# so it needs MSVC Build Tools on Windows. Purely optional -- GitHub Actions
+# validates the workflow itself on push. Pin an older Python if you want it.
+# pyyaml>=6.0
+
+# Test runner with nicer output than unittest (optional; tests are plain unittest).
+pytest>=8.0
+
+# If you prefer `requests` over urllib in the API clients (not used by default).
+# requests>=2.31
+
+# LLM clients call Ollama / OpenAI-compatible HTTP endpoints directly via urllib,
+# so no SDK is required. Install only if you switch to the official SDKs:
+# ollama>=0.3
+# openai>=1.40

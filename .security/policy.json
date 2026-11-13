@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "name": "production-merge-gate",
+  "defaults": {
+    "fail_on_severity": "CRITICAL",
+    "fail_on_ransomware": true,
+    "fail_on_overdue": true,
+    "require_fix_for_affected": false
+  },
+  "rules": [
+    {
+      "id": "no-kev-in-reachable-code",
+      "description": "Known-exploited CVEs cannot ship in code reachable from web, CLI, or main entrypoints",
+      "when": {
+        "kev_listed": true,
+        "exposure": ["local", "cli", "network"]
+      },
+      "action": "fail",
+      "waivable": false
+    },
+    {
+      "id": "network-critical-needs-fix",
+      "description": "Network-exposed critical vulnerabilities must have a published fix",
+      "when": {
+        "severity": "CRITICAL",
+        "exposure": "network",
+        "has_fix": false
+      },
+      "action": "fail"
+    },
+    {
+      "id": "unused-high-review",
+      "description": "High-severity findings in unused dependencies still need a review",
+      "when": {
+        "severity": "HIGH",
+        "reachable": false
+      },
+      "action": "warn"
+    }
+  ],
+  "waivers": [
+    {
+      "id": "W-2026-001",
+      "cve": "CVE-2018-20225",
+      "package": "pip",
+      "reason": "pip is a build-time tool, not shipped in the runtime image; the CVE concerns install-time index resolution and the upstream report is disputed.",
+      "owner": "appsec@example.com",
+      "ticket": "SEC-1421",
+      "expires": "2027-06-30"
+    }
+  ]
+}

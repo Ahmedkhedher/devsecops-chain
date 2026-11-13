@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Security Decision Lab · devsecops-chain</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1019;--panel:#121c2b;--line:#29364b;--ink:#eef3fc;--muted:#a4b5cf;--mint:#71f0c2;--orange:#ffc080;--red:#ff849c}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#173342 0,transparent 45%),var(--bg);color:var(--ink);font:15px/1.6 system-ui,sans-serif}main{max-width:1440px;margin:auto;padding:32px}header{display:flex;justify-content:space-between;gap:24px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:24px}.brand{font-size:12px;letter-spacing:3px;color:var(--mint);font-weight:700}h1{font-size:clamp(30px,4vw,52px);line-height:1.15;letter-spacing:-2px;margin:14px 0}h2{font-size:20px;margin:0 0 8px}p{margin:8px 0;color:var(--muted)}button,input,select{font:inherit;border:1px solid var(--line);border-radius:8px;padding:10px 14px;background:#0d1522;color:var(--ink)}button{cursor:pointer}button:hover{border-color:var(--mint)}button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:var(--mint);color:#09231e;font-weight:700}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--mint);outline-offset:3px}.badge{display:inline-block;border:1px solid var(--line);padding:4px 10px;border-radius:20px;color:var(--mint);font-size:12px;white-space:nowrap}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}.card,.panel{background:linear-gradient(145deg,#162233,#101925);border:1px solid var(--line);border-radius:14px;padding:22px}.label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1.5px}.value{font-size:36px;font-weight:700;letter-spacing:-1px}.value small{font-size:15px;color:var(--muted);font-weight:400}.layout{display:grid;grid-template-columns:1.1fr 1fr;gap:20px}.panel{min-width:0}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.subtle{font-size:12px;color:var(--muted)}.meter{height:12px;background:#28384a;border-radius:8px;overflow:hidden;margin:20px 0 10px}.meter div{height:100%;background:linear-gradient(90deg,#38bdc0,var(--mint));transition:width .25s}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.fix{display:flex;gap:12px;border-top:1px solid var(--line);padding:17px 0;align-items:flex-start}.fix input{accent-color:var(--mint);margin-top:7px;width:18px;height:18px;flex-shrink:0}.fix label{flex:1;cursor:pointer;overflow-wrap:anywhere}.fix strong{display:block}.points{color:var(--mint);font-variant-numeric:tabular-nums;white-space:nowrap}.scroll{max-height:430px;overflow:auto;padding-right:6px}.notice{border-left:3px solid var(--orange);padding:9px 14px;background:#24232a;color:#e3c7aa;font-size:12px;margin-top:18px}.toolbar{display:flex;gap:12px;margin:18px 0;flex-wrap:wrap}.toolbar input{flex:1;min-width:180px}table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px}td,th{padding:14px 10px;border-bottom:1px solid var(--line)}td{overflow-wrap:anywhere}td button{padding:0;border:0;background:none;color:var(--mint);text-align:left}tr.selected{background:#1a3540}.severity{font-size:10px;letter-spacing:1px;font-weight:700}.CRITICAL,.HIGH{color:var(--red)}.MEDIUM{color:var(--orange)}.LOW{color:var(--mint)}.table-wrap{overflow:auto}.wide{margin-top:20px}.evidence{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.signal{border:1px solid var(--line);padding:14px;border-radius:8px}.signal strong{display:block}.detail-copy{white-space:pre-wrap;overflow-wrap:anywhere}.empty{padding:30px 10px;color:var(--muted);text-align:center}footer{margin:24px 0;color:var(--muted);font-size:12px}#detail-title{overflow-wrap:anywhere}noscript{display:block;padding:30px;color:var(--orange)}@media(max-width:950px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}header{align-items:flex-start;flex-direction:column}}@media(max-width:520px){main{padding:16px}.card,.panel{padding:16px}.value{font-size:28px}.evidence{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header><div><div class="brand">DEVSECOPS / DECISION INTELLIGENCE</div><h1>Less noise.<br>More risk removed.</h1><p>Turn a vulnerability backlog into a deliberate remediation plan.</p></div><div><span class="badge">LOCAL-FIRST · OFFLINE REPORT</span><p class="subtle">No telemetry. No cloud. Your evidence stays here.</p></div></header>
+<noscript>This interactive report requires JavaScript. Use the pipeline JSON or Markdown exports for a script-free report.</noscript>
+<section class="metrics" aria-label="Scan summary">
+<div class="card"><div class="label">Findings in report</div><div class="value" id="count">—</div><div class="subtle">Scope: supplied pipeline results</div></div>
+<div class="card"><div class="label">Known exploited</div><div class="value" id="kev">—</div><div class="subtle">Positive KEV signals only</div></div>
+<div class="card"><div class="label">Import evidence</div><div class="value" id="reachable">—</div><div class="subtle">Not proof of exploitability</div></div>
+<div class="card"><div class="label">Projected reduction</div><div class="value"><span id="reduction">0</span><small>% of points</small></div><div class="subtle" id="selected-count">No actions selected</div></div>
+</section>
+<div class="layout">
+<section class="panel"><div class="section-head"><h2>01 / Remediation simulator</h2><span class="badge">WHAT IF?</span></div><p>Choose package review tasks. See which combination addresses the most ranked exposure.</p>
+<div class="meter" role="progressbar" aria-label="Projected priority-point reduction" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="meter"><div id="bar" style="width:0%"></div></div>
+<div class="section-head subtle" aria-live="polite"><span id="projection"></span><span id="coverage"></span></div>
+<div class="actions"><button id="top-three">Select top 3 fixes</button><button id="reset">Reset</button><button class="primary" id="export">Export plan ↓</button></div>
+<div class="scroll" id="fixes"></div>
+<div class="notice">Simulation only: assumes every selected fix requirement is satisfied and validated by a rescan. Priority points are a ranking heuristic, not breach probability. Findings without a supplied fix stay in the residual. No files are changed.</div></section>
+<section class="panel"><div class="section-head"><h2>02 / Evidence inspector</h2><span class="badge">EXPLAINABLE</span></div><p>Select a finding below to inspect its signals and uncertainty.</p><div id="detail"></div></section>
+</div>
+<section class="panel wide"><div class="section-head"><h2>03 / Exposure inventory</h2><span class="subtle" id="visible-count"></span></div>
+<div class="toolbar"><input id="search" type="search" aria-label="Search findings" placeholder="Search CVE, package, artifact…"><select id="filter" aria-label="Filter findings"><option value="all">All evidence</option><option value="kev">Known exploited</option><option value="reachable">Import observed</option><option value="unknown">Reachability unknown</option><option value="unfixed">No supplied fix</option></select></div>
+<div class="table-wrap"><table><thead><tr><th>Severity</th><th>Finding / inspect</th><th>Package</th><th>Priority</th><th>Plan state</th></tr></thead><tbody id="rows"></tbody></table></div><div class="empty" id="empty" hidden>No findings match this view.</div></section>
+<footer>devsecops-chain / Security Decision Lab · Missing signals are not evidence of safety. Static analysis can miss dynamic imports. Report may contain sensitive artifact paths; share deliberately.</footer>
+</main>
+<script type="application/json" id="report-data">__REPORT_DATA__</script>
+<script>
+'use strict';
+const report = JSON.parse(document.getElementById('report-data').textContent);
+const selected = new Set();
+let focused = report.findings.length ? report.findings[0].id : null;
+const $ = id => document.getElementById(id);
+const number = n => n.toLocaleString(undefined,{maximumFractionDigits:2});
+function element(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
+function coveredIds(){return new Set(report.actions.filter(a=>selected.has(a.id)).flatMap(a=>a.fixable_ids));}
+function renderFixes(){
+  $('fixes').replaceChildren();
+  report.actions.forEach(a=>{
+    const wrap=element('div',undefined,'fix');const input=element('input');input.type='checkbox';input.id='fix-'+a.id;input.checked=selected.has(a.id);input.disabled=!a.fixable_ids.length;
+    input.addEventListener('change',()=>{if(input.checked)selected.add(a.id);else selected.delete(a.id);update();});
+    const label=element('label');label.htmlFor=input.id;label.append(element('strong',a.package+' @ '+a.version),element('div',a.target||'Artifact not supplied','subtle'),element('div',a.fixable_ids.length+' / '+a.finding_ids.length+' findings have a supplied fix','subtle'),element('div',a.requirements.length?'Review fix requirements: '+a.requirements.join(' · '):'No fix supplied — investigate mitigation','subtle'));
+    wrap.append(input,label,element('span',number(a.weight)+' pts','points'));$('fixes').append(wrap);
+  });
+  if(!report.actions.length)$('fixes').append(element('div','No remediation tasks in this report.','empty'));
+}
+function inspect(id){
+  focused=id;const f=report.findings.find(r=>r.id===id);const box=$('detail');box.replaceChildren();
+  if(!f){box.append(element('div','No findings to inspect.','empty'));return;}
+  const title=element('h3',f.cve_id+' / '+f.package);title.id='detail-title';box.append(title,element('div',(f.target||'Artifact unknown')+' · installed '+f.version,'subtle'));
+  const signals=element('div',undefined,'evidence');
+  const facts=[['CVSS',f.cvss==null?'Not supplied':String(f.cvss)],['EPSS',f.epss==null?'Unknown / not enriched':number(f.epss*100)+'%'],['Known exploited',f.kev_listed?'KEV listed':'Not flagged / may be unenriched'],['Reachability',f.reachable===true?'Import / symbol observed':f.reachable===false?'Not observed by static analysis':'Unknown / not analyzed']];
+  facts.forEach(([name,value])=>{const item=element('div',undefined,'signal');item.append(element('span',name,'label'),element('strong',value));signals.append(item);});box.append(signals);
+  box.append(element('div','FIX REQUIREMENT','label'),element('p',f.fixed_version||'No fixed version supplied. Investigate mitigations.','detail-copy'));
+  if(f.explanation){box.append(element('div','GENERATED EXPLANATION · VERIFY BEFORE ACTING','label'),element('p',f.explanation,'detail-copy'));}
+  if(f.suggested_fix)box.append(element('p',f.suggested_fix,'detail-copy'));
+  box.append(element('div','A supplied fix is not a compatibility guarantee. Test the chosen release and rescan before marking the finding resolved.','notice'));
+}
+function renderRows(){
+ const query=$('search').value.toLowerCase();const filter=$('filter').value;const covered=coveredIds();
+ const rows=report.findings.filter(f=>[f.cve_id,f.package,f.target||'',f.version].join(' ').toLowerCase().includes(query)).filter(f=>filter==='all'||filter==='kev'&&f.kev_listed||filter==='reachable'&&f.reachable===true||filter==='unknown'&&f.reachable==null||filter==='unfixed'&&!(f.fixed_version||'').trim());
+ $('rows').replaceChildren();
+ rows.forEach(f=>{const row=element('tr');if(f.id===focused)row.className='selected';const sev=element('td',f.severity||'UNKNOWN','severity');if(['CRITICAL','HIGH','MEDIUM','LOW'].includes(f.severity))sev.classList.add(f.severity);const cell=element('td');const button=element('button',f.cve_id);button.setAttribute('aria-label','Inspect '+f.cve_id+' in '+f.package);button.addEventListener('click',()=>{inspect(f.id);renderRows();});cell.append(button);row.append(sev,cell,element('td',f.package+' @ '+f.version),element('td',f.priority_score==null?'Unscored':number(f.weight)),element('td',covered.has(f.id)?'Projected addressed':'Residual'));$('rows').append(row);});
+ $('visible-count').textContent=rows.length+' / '+report.findings.length+' shown';$('empty').hidden=rows.length>0;
+}
+function update(){
+ const covered=coveredIds();const removed=report.findings.filter(f=>covered.has(f.id)).reduce((sum,f)=>sum+f.weight,0);const pct=report.total_weight?Math.min(100,removed/report.total_weight*100):0;
+ const keepFocus=document.activeElement&&document.activeElement.id;
+ $('reduction').textContent=number(pct);$('bar').style.width=pct+'%';$('meter').setAttribute('aria-valuenow',pct.toFixed(2));$('selected-count').textContent=selected.size+' package review tasks selected';$('projection').textContent=number(Math.max(0,report.total_weight-removed))+' / '+number(report.total_weight)+' priority points remain';$('coverage').textContent=covered.size+' / '+report.findings.length+' findings projected addressed';renderFixes();renderRows();
+ if(keepFocus){const restored=document.getElementById(keepFocus);if(restored&&typeof restored.focus==='function')restored.focus();}
+}
+$('count').textContent=report.findings.length;$('kev').textContent=report.findings.filter(f=>f.kev_listed).length;$('reachable').textContent=report.findings.filter(f=>f.reachable===true).length;
+if(report.unscored)$('projection').parentElement.after(element('p',report.unscored+' findings are unscored and contribute no priority points.','notice'));
+$('top-three').addEventListener('click',()=>{selected.clear();report.actions.filter(a=>a.fixable_ids.length).slice(0,3).forEach(a=>selected.add(a.id));update();});
+$('reset').addEventListener('click',()=>{selected.clear();update();});
+$('search').addEventListener('input',renderRows);$('filter').addEventListener('change',renderRows);
+$('export').addEventListener('click',()=>{
+ const plan={schema_version:1,kind:'unverified-remediation-simulation',assumption:'Satisfy every listed fix requirement, test compatibility, and rescan. No changes have been applied.',actions:report.actions.filter(a=>selected.has(a.id)),findings:report.findings.filter(f=>covered.has(f.id))};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(plan,null,2)],{type:'application/json'}));const link=element('a');link.href=url;link.download='remediation-plan.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+inspect(focused);update();
+</script>
+</body>
+</html>
